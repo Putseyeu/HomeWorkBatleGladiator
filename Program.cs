@@ -36,13 +36,13 @@ namespace HomeWorkGladiator2
                 if (actionСhoice == two)
                 {
                     Console.WriteLine($"{gladiatorOne.Name} использует навык !");
-                    arena.UseTalent(gladiatorOne, gladiatorTwo);
+                    gladiatorOne.UseTalent(gladiatorOne, gladiatorTwo);
                 }
 
                 if (actionСhoice == three)
                 {
                     Console.WriteLine($"{gladiatorTwo.Name} использует своё умениe!");
-                    arena.UseTalent(gladiatorTwo, gladiatorOne);
+                    gladiatorTwo.UseTalent(gladiatorTwo, gladiatorOne);
                 }
 
                 arena.ShowHealth(gladiatorOne.Health, gladiatorOne.Name, gladiatorTwo.Health, gladiatorTwo.Name);
@@ -57,9 +57,7 @@ namespace HomeWorkGladiator2
     {
         private Gladiator _gladiator;
         private string _userInput = "";
-        private int _upHealth = 0;
-        private int _zeroDamage = 0;
-        Random random = new Random();      
+        private int _upHealth = 0;   
 
         public Gladiator ChoiceTypeGladiator()
         {
@@ -111,39 +109,6 @@ namespace HomeWorkGladiator2
             gladiatorTwo.ChangeHealth(gladiatorTwo.Health, gladiatorOne.Damage, _upHealth);
             Console.WriteLine("Гладиаторы обмениваются ударами");                      
         }
-        
-        public void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
-        {
-            if (gladiatorOne is Warrior warrior)
-            {
-                int damage = warrior.UseForce();
-                gladiatorOne.ChangeHealth(gladiatorOne.Health, gladiatorTwo.Damage, _upHealth);
-                gladiatorTwo.ChangeHealth(gladiatorTwo.Health, damage, _upHealth);
-            }
-
-            if (gladiatorOne is Magician magician)
-            {
-                int damageMag = magician.UseMagic();
-                gladiatorTwo.ChangeHealth(gladiatorTwo.Health, damageMag, _upHealth);
-            }
-
-            if (gladiatorOne is Paladin paladin)
-            {
-                _upHealth = paladin.UsePrayer();
-                gladiatorOne.ChangeHealth(gladiatorOne.Health, _zeroDamage, _upHealth);
-                _upHealth = 0;
-            }
-
-            if (gladiatorOne is Shaman shaman)
-            {
-                if (gladiatorOne.Health < gladiatorTwo.Health)
-                {
-                    _upHealth = shaman.UseExchange(gladiatorOne.Health, gladiatorTwo.Health);
-                    gladiatorOne.ChangeHealth(gladiatorOne.Health, _zeroDamage, _upHealth);
-                    _upHealth = 0;
-                }
-            }
-        }
 
         public void DetermineWinner (Gladiator gladiatorOne, Gladiator gladiatorTwo)
         {
@@ -186,6 +151,11 @@ class Gladiator
         SetName();
     }
 
+    public virtual void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
+    {
+
+    }
+
     public int ChangeHealth(int health, int damage, int upHealth)
     {
         int minDamage = 0;
@@ -199,48 +169,62 @@ class Gladiator
 
     public void SetName()
     {
-        Console.WriteLine("Вы на арене ! Назовите своё имя!");
+        Console.WriteLine("Боец на арене ! Назовите своё имя!");
         Name = Console.ReadLine();
     }
 }
 
 class Magician : Gladiator
 {
-    public int UseMagic()
+    public override void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
     {
+        int upHealth = 0;
         int magicDamage = 10;
         Console.WriteLine("Маг успел  произнести заклинание холода и противник не может ответить противника");
-        return magicDamage;
+        gladiatorTwo.ChangeHealth(gladiatorTwo.Health, magicDamage, upHealth);
     }
 }
 
 class Warrior : Gladiator
 {
-    public int UseForce()
+    public override void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
     {
-        int additionalDamage = 30;
-        Console.WriteLine("Воин размашисто рубит противника. урон увеличен!");
-        return additionalDamage;       
+        if (gladiatorOne is Warrior warrior)
+        {
+            int upHealth = 0;
+            int additionalDamage = 30;
+            Console.WriteLine("Воин размашисто рубит противника. урон увеличен!");
+            gladiatorOne.ChangeHealth(gladiatorOne.Health, gladiatorTwo.Damage, upHealth);
+            gladiatorTwo.ChangeHealth(gladiatorTwo.Health, additionalDamage, upHealth);
+        }      
     }
 }
 
 class Paladin : Gladiator
 {
-    public int UsePrayer()
+    public override void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
     {
-        int upHealth = 5;
-        Console.WriteLine("Воин паладин произносит молитву и залечивает раны.");
-        return upHealth;        
+        if (gladiatorOne is Paladin paladin)
+        {
+            int upHealth = 5;
+            int damage = 0;
+            Console.WriteLine("Воин паладин произносит молитву и залечивает раны.");
+            gladiatorOne.ChangeHealth(gladiatorOne.Health, damage, upHealth);
+        }        
     }
 }
 
 class Shaman : Gladiator
 {
-    public int UseExchange(int healtOne, int heltTwo)
+    public override void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
     {
-        Console.WriteLine("Шаман использует силу духа и выравнивает здоровье с противником!");
-        int upHealt = heltTwo - healtOne;
-        return upHealt;
+        if (gladiatorOne.Health < gladiatorTwo.Health)
+        {
+            int damage = 0;
+            Console.WriteLine("Шаман использует силу духа и выравнивает здоровье с противником!");
+            int upHealt = gladiatorTwo.Health - gladiatorOne.Health;
+            gladiatorOne.ChangeHealth(gladiatorOne.Health, damage, upHealt);
+        }
     }
 }
 
