@@ -57,47 +57,43 @@ namespace HomeWorkGladiator2
     {
         private Gladiator _gladiator;
         private string _userInput = "";
-        private int _upHealth = 0;   
+        private int _upHealth = 0;
 
         public Gladiator ChoiceTypeGladiator()
         {
-            bool done = false;
+            int numberSelect = 1;
             Console.WriteLine("Выбериите класс бойца." +
                 "\n1 - Воин." +
                 "\n2 - Боевой маг." +
                 "\n3 - Паладин." +
                 "\n4 - Шаман");
 
-            while (done != true)
+            while (numberSelect != 0)
             {
                 switch (_userInput = Console.ReadLine())
                 {
                     case "1":
                         _gladiator = new Warrior();
-                        done = true;
                         break;
 
                     case "2":
                         _gladiator = new Magician();
-                        done = true;
                         break;
 
                     case "3":
                         _gladiator = new Paladin();
-                        done = true;
                         break;
 
                     case "4":
                         _gladiator = new Shaman();
-                        done = true;
                         break;
 
-                        default:
-                        Console.WriteLine("В сражение учавствует обычный боец");
+                    default:
                         _gladiator = new Gladiator();
-                        done = true;
                         break;
                 }
+
+                numberSelect--;
             }
 
             return _gladiator;
@@ -107,10 +103,10 @@ namespace HomeWorkGladiator2
         {
             gladiatorOne.ChangeHealth(gladiatorOne.Health, gladiatorTwo.Damage, _upHealth);
             gladiatorTwo.ChangeHealth(gladiatorTwo.Health, gladiatorOne.Damage, _upHealth);
-            Console.WriteLine("Гладиаторы обмениваются ударами");                      
+            Console.WriteLine("Гладиаторы обмениваются ударами");
         }
 
-        public void DetermineWinner (Gladiator gladiatorOne, Gladiator gladiatorTwo)
+        public void DetermineWinner(Gladiator gladiatorOne, Gladiator gladiatorTwo)
         {
             if (gladiatorOne.Health > 0)
             {
@@ -189,14 +185,12 @@ class Warrior : Gladiator
 {
     public override void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
     {
-        if (gladiatorOne is Warrior warrior)
-        {
-            int upHealth = 0;
-            int additionalDamage = 30;
-            Console.WriteLine("Воин размашисто рубит противника. урон увеличен!");
-            gladiatorOne.ChangeHealth(gladiatorOne.Health, gladiatorTwo.Damage, upHealth);
-            gladiatorTwo.ChangeHealth(gladiatorTwo.Health, additionalDamage, upHealth);
-        }      
+
+        int upHealth = 0;
+        int additionalDamage = 30;
+        Console.WriteLine("Воин размашисто рубит противника. урон увеличен!");
+        gladiatorOne.ChangeHealth(gladiatorOne.Health, gladiatorTwo.Damage, upHealth);
+        gladiatorTwo.ChangeHealth(gladiatorTwo.Health, additionalDamage, upHealth);
     }
 }
 
@@ -204,13 +198,10 @@ class Paladin : Gladiator
 {
     public override void UseTalent(Gladiator gladiatorOne, Gladiator gladiatorTwo)
     {
-        if (gladiatorOne is Paladin paladin)
-        {
-            int upHealth = 5;
-            int damage = 0;
-            Console.WriteLine("Воин паладин произносит молитву и залечивает раны.");
-            gladiatorOne.ChangeHealth(gladiatorOne.Health, damage, upHealth);
-        }        
+        int upHealth = 5;
+        int damage = 0;
+        Console.WriteLine("Воин паладин произносит молитву и залечивает раны.");
+        gladiatorOne.ChangeHealth(gladiatorOne.Health, damage, upHealth);
     }
 }
 
